@@ -65,7 +65,7 @@ class MultiHeadCausalAttention(nn.Module):
         all_queries = self.queries(x).view(batch_size, seq_len, self.config.heads, embed_size // self.config.heads).transpose(1, 2)
         all_values = self.values(x).view(batch_size, seq_len, self.config.heads, embed_size // self.config.heads).transpose(1, 2)
 
-        queries_keys = (all_queries @ all_keys.transpose(-1, -2)) * (1.0 / math.sqrt(all_keys.size(-1)))
+        queries_keys = (all_queries @ all_keys.transpose(-2, -1)) * (1.0 / math.sqrt(all_keys.size(-1)))
 
         # Attention (materializes the larg (seq_len, seq_len) matrix for all the queries and keys)
         masked_queries_keys = queries_keys.masked_fill(self.bias[:, :, :seq_len, :seq_len] == 0, float("-inf"))
